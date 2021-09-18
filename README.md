@@ -2,7 +2,7 @@
 
 There are a few of these out there but none that I was really satisfied with. [LeetPlug](https://leetplug.azurewebsites.net/) seemed promising but the server taking data is no longer in service so as a record for viewing progress, it's not super useful.
 
-I used [LeetCode Timer Tracker] for a while, but I wanted something that felt integrated into LeetCode like how LeetPlug functioned.
+I used [LeetCode Timer Tracker](https://chrome.google.com/webstore/detail/leetcode-time-tracker/obcihoolahbncgakepoceagnjnfgghhl?hl=en) for a while, but I wanted something that felt integrated into LeetCode like how LeetPlug functioned.
 
 ### Requirements
 1. Integrated into the page
