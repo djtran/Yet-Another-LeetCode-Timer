@@ -1,0 +1,28 @@
+{
+    "name": "Yet Another LeetCode Timer",
+    "description": "Integrated LeetCode extension with times stored locally",
+    "version": "0.1",
+    "manifest_version": 3,
+    "permissions": [
+        "storage"
+    ],
+    "action": {
+        "default_icon": {
+            "16": "/img/ext16.png",
+            "32": "/img/ext32.png",
+            "128": "/img/ext128.png"
+        }
+    },
+    "icons": {
+        "16": "/img/ext16.png",
+        "32": "/img/ext32.png",
+        "128": "/img/ext128.png"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://leetcode.com/problems/*"],
+            "run_at": "document_start",
+            "js": ["src/main.js"]
+        }
+    ]
+}
