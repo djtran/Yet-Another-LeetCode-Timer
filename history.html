@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YALCT - History</title>
-    <link href="css/style.css" rel="stylesheet" type="text/css">
-  </head>
-  <body>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YALCT - History</title>
+  <link href="lib/Skeleton-2.0.4/css/skeleton.css" rel="stylesheet" type="text/css">
+  <link href="css/style.css" rel="stylesheet" type="text/css">
+  <link rel="icon" type="image/png" href="img/ext32.png">
+</head>
+
+<body>
+  <div class="container">
     <h1>Statistics Across Sessions</h1>
     <h3>Time Per Difficulty</h3>
     <div class="easyTime"></div>
@@ -22,19 +27,31 @@
     <div class="easyAttempts"></div>
     <div class="mediumAttempts"></div>
     <div class="hardAttempts"></div>
+
+    <hr>
     
     <h1>Local Problem History</h1>
     <button class="data-export-json-btn">Export data as JSON</button>
     <button class="data-export-csv-btn">Export data as CSV</button>
-    <table class="history-data">
-    <tr>
-      <th>Problem</th>
-      <th>Difficulty</th>
-      <th>Errors Submitted</th>
-      <th>Time To Successful Submission</th>
-      <th>Date</th>
-    </tr>
+    <table>
+      <thead>
+
+        <tr>
+          <th>Problem</th>
+          <th>Difficulty</th>
+          <th>Errors Submitted</th>
+          <th>Time To Successful Submission</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody class="history-data">
+        
+      </tbody>
     </table>
-  </body>
-  <script src="src/history.js"></script>
+  </div>
+</body>
+
+<script src="https://unpkg.com/frappe-charts@1.1.0/dist/frappe-charts.min.umd.js"></script>
+<script src="src/history.js"></script>
+
 </html>
