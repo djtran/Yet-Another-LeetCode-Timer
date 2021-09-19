@@ -1,5 +1,6 @@
 /**
  * Timer implementation provided from https://olinations.medium.com/an-accurate-vanilla-js-stopwatch-script-56ceb5c6f45b, which I found through the LeetPlug project.
+ * Modified to remove the styling, change default texts, remove pause toggle behavior, and operate on seconds rather than intervals.
  */
 
 var startTimerButton = document.querySelector('.startTimer');
@@ -20,8 +21,6 @@ function startTimer() {
 
         paused = 0;
         running = 1;
-        startTimerButton.classList.add('lighter');
-        pauseTimerButton.classList.remove('lighter');
         startTimerButton.style.cursor = "auto";
         pauseTimerButton.style.cursor = "pointer";
     }
@@ -34,13 +33,8 @@ function pauseTimer() {
         savedTime = difference;
         paused = 1;
         running = 0;
-        startTimerButton.classList.remove('lighter');
-        pauseTimerButton.classList.add('lighter');
         startTimerButton.style.cursor = "pointer";
         pauseTimerButton.style.cursor = "auto";
-    } else {
-        // if the timer was already paused, when they click pause again, start the timer again
-        startTimer();
     }
 }
 function resetTimer() {
@@ -49,12 +43,7 @@ function resetTimer() {
     difference = 0;
     paused = 0;
     running = 0;
-    timerDisplay.innerHTML = 'Start Timer!';
-    timerDisplay.style.background = "#A90000";
-    timerDisplay.style.color = "#fff";
-    timerDisplay.style.cursor = "pointer";
-    startTimerButton.classList.remove('lighter');
-    pauseTimerButton.classList.remove('lighter');
+    timerDisplay.innerHTML = '00:00:00';
     startTimerButton.style.cursor = "pointer";
     pauseTimerButton.style.cursor = "auto";
 }
