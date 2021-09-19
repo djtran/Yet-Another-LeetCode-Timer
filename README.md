@@ -13,3 +13,9 @@ I used [LeetCode Timer Tracker](https://chrome.google.com/webstore/detail/leetco
   - LeetPlug probably had interesting potential for aggregated data views, but ultimately the owner had to maintain and pay for a web server and the setup & email verification process felt like unnecessary work for someone that just wants to quickly pick it up and run with it.
 3. Exportable
   - Excel sheets could be fun. Until data viz is built into this, I'll use excel or google sheets easily.
+
+
+### Other Notes
+Chrome local storage will get you through ~26k problems before you hit any storage limit. Sync storage would be nice, but you'd hit ~40 problems with the current impl. If we spread out the data across all keys and use all the sync storage allowed for an extension, we could manage around 500-512 problems. For this reason, we store all question data locally but will update sync storage with aggregate-able metadata such as number of errors, time to completion, difficulty, etc.
+
+One of the risks of the current implementation is moving to another page will kill your timer. It's going to be logged to the console before being reset, so you can manually maintain and patch that up if needed.

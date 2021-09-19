@@ -1,11 +1,10 @@
-console.log('Problem opened');
 window.addEventListener("load", onLoadPage, false);
 
 const DIFFICULTY = {
     EASY: "Easy",
     MEDIUM: "Medium",
     HARD: "Hard",
-    UNKNOWN: "Unknown"
+    UNKNOWN: "N/A"
 }
 
 function getProblemURL() {
@@ -35,29 +34,43 @@ const submissionErrorElement = "[class*='error__']";
 
 function waitForSubmitResponse() {
     let success = document.querySelector("[class*='result__']").querySelector("[class*='success__']");
-    
+
     //WrongAnswer, Time Limit Exceeded, Compile Error
     let error = document.querySelector("[class*='result__']").querySelector("[class*='error__']");
 
     if (success != null) {
         //stop the problem timer, save the problem data.
-        console.log("SubmitResponse success, writing data")
         pauseTimer();
         let time = timerDisplay.innerText;
-        currentSession["successTime"] = time;
+        currentSession["time"] = time;
         clearInterval(submitTimer);
-        chrome.storage.local.get(['history'], function(data) {
+        chrome.storage.local.get(['history'], function (data) {
             let history = data.history;
             if (history == null) {
                 history = []
             }
             history.push(currentSession);
-            chrome.storage.local.set({'history':history});
+            chrome.storage.local.set({ 'history': history });
+        });
+        chrome.storage.sync.get(['aggregate'], function (data) {
+            let agg = data.aggregate;
+            if (agg == null) {
+                agg = []
+            }
+            let reduced = {
+                "diff": currentSession["difficulty"],
+                "err": currentSession["errors"],
+                "time": currentSession["time"],
+                "date": currentSession["date"]
+            }
+            agg.push(reduced);
+            chrome.storage.sync.set({
+                "aggregate": agg
+            });
         })
 
     } else if (error != null) {
         //increment the error counter for this problem.
-        console.log("SubmitResponse error, incrementing errors")
         currentSession["errors"] += 1;
         clearInterval(submitTimer);
 
@@ -71,26 +84,49 @@ var submitTimer;
 
 function addClickListenerToSubmitButton() {
     document.querySelector('[data-cy="submit-code-btn"]').onclick = () => {
-        console.log("submitted");
         submitTimer = setInterval(waitForSubmitResponse, 250);
     }
 }
 
-function setupTimer() {        
+//If the code area changes, e.g. typing, start the timer if it hasn't already started.
+function addCodeMutationObserver() {
+     //More Details https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+    // select the target node
+    var target = document.querySelector('.CodeMirror')
+    // create an observer instance
+    var observer = new MutationObserver(function(mutations) {
+        startTimer();   
+    });
+    // configuration of the observer:
+    var config = { subtree: true, childList: true };
+    // pass in the target node, as well as the observer options
+    observer.observe(target, config);
+
+}
+
+function setupTimer() {
+    
+    let checkForExisting = document.querySelector(".timer");
+    if (checkForExisting != null) {
+        //do nothing
+        return;
+    }
+
     //init timer
     let referenceNode = document.querySelector("[data-cy='run-code-btn']");
     timerDisplay = document.createElement("label");
     timerDisplay.classList.add('timer');
     timerDisplay.innerText = "00:00:00";
     timerDisplay.style.marginRight = "16px";
-    
+    timerDisplay.style.padding = "8px";
+
     //start button
     startTimerButton = document.createElement("button");
     startTimerButton.classList.add('startTimer')
     startTimerButton.innerText = "Start Timer"
     startTimerButton.style.marginRight = "16px";
     startTimerButton.onclick = startTimer;
-    
+
     //pause button
     pauseTimerButton = document.createElement("button");
     pauseTimerButton.classList.add('pauseTimer')
@@ -101,8 +137,6 @@ function setupTimer() {
     referenceNode.parentNode.insertBefore(startTimerButton, referenceNode);
     referenceNode.parentNode.insertBefore(pauseTimerButton, referenceNode);
     referenceNode.parentNode.insertBefore(timerDisplay, referenceNode);
-
-    resetTimer();
 }
 
 var currentProblem = "";
@@ -111,21 +145,22 @@ var currentSession = {};
 function detectChanges() {
     let title = getProblemName();
 
-    if(title != currentProblem) {
-        console.log("Problem Changed");
+    if (title != currentProblem) {
+        console.log("Problem Changed from " + currentProblem + " to " + title);
         //New problem has been loaded.
         currentProblem = title;
 
         //Setup timer and buttons
         setupTimer();
+        resetTimer();
         //init code editor listener to start timer automatically if paused but typing.
-
+        //Do with a delay to let the code editor populate first, otherwise the mutation observer will watch for it.
+        setTimeout(addCodeMutationObserver, 1000);
         //Setup submit listener
         addClickListenerToSubmitButton();
         clearInterval(submitTimer);
 
         //setup data object for this session
-
         let difficulty = getDifficulty();
         let url = getProblemURL();
         let date = new Date();
@@ -137,7 +172,7 @@ function detectChanges() {
             "date": date.toISOString(),
             "errors": 0
         }
-        
+
     }
 
 
@@ -146,14 +181,6 @@ function detectChanges() {
 var currentProblem = null;
 // Main onLoadPage function, starts the cycles needed to discover the elements inside the page
 // and to attach listeners to them
-function onLoadPage (evt) {
-
-    setInterval(detectChanges,500);
-    console.log("page loaded");
-
-    chrome.storage.local.get(['history'], function(data) {
-        let history = data.history;
-        console.log(JSON.stringify(history));
-    });
-
+function onLoadPage(evt) {
+    setInterval(detectChanges, 500);
 }

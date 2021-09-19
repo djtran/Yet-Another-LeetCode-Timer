@@ -21,6 +21,7 @@ function startTimer() {
 
         paused = 0;
         running = 1;
+        timerDisplay.style.background = "#C7F1C7";
         startTimerButton.style.cursor = "auto";
         pauseTimerButton.style.cursor = "pointer";
     }
@@ -33,11 +34,13 @@ function pauseTimer() {
         savedTime = difference;
         paused = 1;
         running = 0;
+        timerDisplay.style.background = "";
         startTimerButton.style.cursor = "pointer";
         pauseTimerButton.style.cursor = "auto";
     }
 }
 function resetTimer() {
+    console.log("Time before clearing: " + timerDisplay.innerHTML);
     clearInterval(tInterval);
     savedTime = 0;
     difference = 0;
