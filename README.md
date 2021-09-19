@@ -4,6 +4,8 @@ There are a few of these out there but none that I was really satisfied with. [L
 
 I used [LeetCode Timer Tracker](https://chrome.google.com/webstore/detail/leetcode-time-tracker/obcihoolahbncgakepoceagnjnfgghhl?hl=en) for a while, but I wanted something that felt integrated into LeetCode like how LeetPlug functioned.
 
+The package follows [SemVer](https://semver.org/) for determining version numbering. The declared API can be found in the `model.jsonc` file in the root directory.
+
 ### Requirements
 1. Integrated into the page
   - starts when you either click start or you first start typing.

@@ -1,4 +1,3 @@
-console.log('History opened');
 window.addEventListener("load", onLoadPage, false);
 
 var historyData;
@@ -46,7 +45,6 @@ function onLoadPage(evt) {
 
     chrome.storage.local.get(['history'], function (data) {
         historyData = data.history;
-        console.log(JSON.stringify(historyData));
         let table = document.querySelector(".history-data");
         historyData.forEach(element => {
             let newRow = table.insertRow(-1);

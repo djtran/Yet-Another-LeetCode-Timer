@@ -1,0 +1,23 @@
+// This file defines the model used to communicate between the various functions and pages used within the extension
+[
+    // Problem Data recorded in a list of eventually successful submissions
+    // Stored in chrome.storage.local.get(['history'])
+    // Example uses the Two Sum problem on LeetCode
+    {
+        "date": "2021-09-19T17:56:10.609Z",                 //Date in ISO8601 format
+        "difficulty": "Easy",                               //Easy, Medium, Hard as reflected on the website
+        "errors": 0,                                        //Number of faulty submissions - Wrong Answer, Time Limit Exceeded, Compile Error, Runtime Error, etc.
+        "problem": "1. Two Sum",                            //Name of the LC Problem
+        "time": "00:00:08",                                 //HH:MM:SS of the timer when LC received and verified a Success submission
+        "url": "https://leetcode.com/problems/two-sum/"     //URL to the problem recorded at the time of successful submission
+    },
+
+    // Aggregate Data recorded at the same time as problem data for broad metric trends
+    // Stored in chrome.storage.local.get(['aggregate'])
+    {
+        "diff": "Easy",                                     //Corresponds to "difficulty"
+        "err": 0,                                           //Corresponds to "errors"
+        "time": "00:00:08",                                 //Corresponds to "time"
+        "date": "2021-09-19T17:56:10.609Z"                  //Corresponds to "date"
+    }
+]
