@@ -22,7 +22,7 @@
         {
             "matches": ["https://leetcode.com/problems/*"],
             "run_at": "document_start",
-            "js": ["src/main.js"]
+            "js": ["src/main.js", "src/timer.js"]
         }
     ]
 }
