@@ -39,20 +39,22 @@ function waitForSubmitResponse() {
     let error = document.querySelector("[class*='result__']").querySelector("[class*='error__']");
 
     if (success != null) {
+        successfulCompletion = true;
         //stop the problem timer, save the problem data.
         pauseTimer();
         let time = timerDisplay.innerText;
         currentSession["time"] = time;
         clearInterval(submitTimer);
         chrome.storage.local.get(['history'], function (data) {
-            let history = data.history;
-            if (history == null) {
-                history = []
+            let historyData = data.history;
+            if (historyData == null) {
+                historyData = []
             }
-            history.push(currentSession);
-            chrome.storage.local.set({ 'history': history });
+            historyData.push(currentSession);
+            chrome.storage.local.set({ 'history': historyData });
         });
-        chrome.storage.sync.get(['aggregate'], function (data) {
+
+        chrome.storage.local.get(['aggregate'], function (data) {
             let agg = data.aggregate;
             if (agg == null) {
                 agg = []
@@ -64,9 +66,10 @@ function waitForSubmitResponse() {
                 "date": currentSession["date"]
             }
             agg.push(reduced);
-            chrome.storage.sync.set({
+            chrome.storage.local.set({
                 "aggregate": agg
             });
+            console.log("saving aggregate")
         })
 
     } else if (error != null) {
@@ -88,14 +91,17 @@ function addClickListenerToSubmitButton() {
     }
 }
 
-//If the code area changes, e.g. typing, start the timer if it hasn't already started.
+var successfulCompletion = false;
+//If the code area changes, e.g. typing, and we haven't completed the problem start the timer if it hasn't already started.
 function addCodeMutationObserver() {
-     //More Details https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+    //More Details https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
     // select the target node
     var target = document.querySelector('.CodeMirror')
     // create an observer instance
-    var observer = new MutationObserver(function(mutations) {
-        startTimer();   
+    var observer = new MutationObserver(function (mutations) {
+        if (!successfulCompletion) {
+            startTimer();
+        }
     });
     // configuration of the observer:
     var config = { subtree: true, childList: true };
@@ -105,7 +111,7 @@ function addCodeMutationObserver() {
 }
 
 function setupTimer() {
-    
+
     let checkForExisting = document.querySelector(".timer");
     if (checkForExisting != null) {
         //do nothing
@@ -155,6 +161,7 @@ function detectChanges() {
         resetTimer();
         //init code editor listener to start timer automatically if paused but typing.
         //Do with a delay to let the code editor populate first, otherwise the mutation observer will watch for it.
+        successfulCompletion = false;
         setTimeout(addCodeMutationObserver, 1000);
         //Setup submit listener
         addClickListenerToSubmitButton();

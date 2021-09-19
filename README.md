@@ -16,6 +16,8 @@ I used [LeetCode Timer Tracker](https://chrome.google.com/webstore/detail/leetco
 
 
 ### Other Notes
-Chrome local storage will get you through ~26k problems before you hit any storage limit. Sync storage would be nice, but you'd hit ~40 problems with the current impl. If we spread out the data across all keys and use all the sync storage allowed for an extension, we could manage around 500-512 problems. For this reason, we store all question data locally but will update sync storage with aggregate-able metadata such as number of errors, time to completion, difficulty, etc.
+Chrome local storage will get you through ~26k problems before you hit any storage limit. Sync storage would be nice, but you'd hit ~40 problems with the current impl. If we spread out the data across all keys and use all the sync storage allowed for an extension, we could manage around 500-512 problems. 
+
+Unfortunately we cannot use sync and local storage at the same time, so the dream of having smaller aggregate metric data synced everywhere is not something I'll support here.
 
 One of the risks of the current implementation is moving to another page will kill your timer. It's going to be logged to the console before being reset, so you can manually maintain and patch that up if needed.
