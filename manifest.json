@@ -20,9 +20,17 @@
     },
     "content_scripts": [
         {
-            "matches": ["https://leetcode.com/problems/*"],
+            "matches": [
+                "https://leetcode.com/problems/*"
+            ],
             "run_at": "document_start",
-            "js": ["src/main.js", "src/timer.js"]
+            "js": [
+                "src/main.js",
+                "src/timer.js"
+            ]
         }
-    ]
+    ],
+    "background": {
+        "service_worker": "src/background.js"
+    }
 }
