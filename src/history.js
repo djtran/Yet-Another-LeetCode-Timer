@@ -92,7 +92,7 @@ function createPercentageChart(chartClass, titleText, labels, values, colors = [
     })
 }
 
-function createSubmissionsHeatMap(chartClass, titleText, datapoints) {
+function createSubmissionsHeatMap(chartClass, datapoints) {
     let sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
     let tomorrow = new Date();
@@ -103,7 +103,7 @@ function createSubmissionsHeatMap(chartClass, titleText, datapoints) {
         end: tomorrow
     }
     let heatmap = new frappe.Chart(chartClass, {
-        title: titleText,
+        title: "Successful Submissions Over the Last 6 Months",
         data: data,
         type: 'heatmap'
     })
@@ -229,12 +229,8 @@ function onLoadPage(evt) {
 
             createSubmissionsHeatMap(
                 ".submissions-heatmap",
-                "Successful Submissions Over the Last 30 Days",
                 successfulSubmissionsPerDay
             )
-
-
-
         }
 
         //Easy
