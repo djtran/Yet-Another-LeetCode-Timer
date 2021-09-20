@@ -4,33 +4,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YALCT - History</title>
-  <link href="lib/Skeleton-2.0.4/css/skeleton.css" rel="stylesheet" type="text/css">
-  <link href="css/style.css" rel="stylesheet" type="text/css">
-  <link rel="icon" type="image/png" href="img/ext32.png">
+  <title>YALT Data</title>
+
+  <link href="lib/Skeleton-2.0.4/css/normalize.css" rel="stylesheet">
+  <link href="lib/Skeleton-2.0.4/css/skeleton.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="img/yalt32.png">
 </head>
 
 <body>
   <div class="container">
-    <h1>Statistics Across Sessions</h1>
-    <h3>Time Per Difficulty</h3>
-    <div class="easyTime"></div>
-    <div class="mediumTime"></div>
-    <div class="hardTime"></div>
+    <div class="row wrap-flexbox">
+      <div class="three columns"> <img src="img/yalt128.png"> </div>
+      <div class="three columns"> <h4>Yet Another LeetCode Timer</h4> </div>
+      <div class="six columns"> 
+        <div class="submissions-heatmap"></div>
+      </div>
+    </div>
+    <hr>
+    <h1>Statistics</h1>
+    <div class="row">
+      <div class="easy-time-chart four columns"></div>
+      <div class="medium-time-chart four columns"></div>
+      <div class="hard-time-chart four columns"></div>
+    </div>
 
-    <h3>Problem Difficulty</h3>
-    <div class="easyDiff"></div>
-    <div class="mediumDiff"></div>
-    <div class="hardDiff"></div>
+    <div class="row">
+      <div class="difficulty-aggregate-chart twelve columns"></div>
+    </div>
 
-    <h3>Difficulty Attempts</h3>
-    <div class="easyAttempts"></div>
-    <div class="mediumAttempts"></div>
-    <div class="hardAttempts"></div>
+    <div class="row">
+      <div class="easy-attempts-chart four columns"></div>
+      <div class="medium-attempts-chart four columns"></div>
+      <div class="hard-attempts-chart four columns"></div>
+    </div>
 
     <hr>
     
-    <h1>Local Problem History</h1>
+    <h1>Problem History</h1>
     <button class="data-export-json-btn">Export data as JSON</button>
     <button class="data-export-csv-btn">Export data as CSV</button>
     <table>
@@ -50,8 +61,7 @@
     </table>
   </div>
 </body>
-
-<script src="https://unpkg.com/frappe-charts@1.1.0/dist/frappe-charts.min.umd.js"></script>
-<script src="src/history.js"></script>
+<script src="lib/frappe/frappe-charts.min.iife.js"></script>
+<script defer src="src/history.js"></script>
 
 </html>

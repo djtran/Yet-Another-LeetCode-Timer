@@ -52,6 +52,7 @@ function waitForSubmitResponse() {
             }
             historyData.push(currentSession);
             chrome.storage.local.set({ 'history': historyData });
+            console.log("saving successful submission");
         });
 
         chrome.storage.local.get(['aggregate'], function (data) {

@@ -8,15 +8,15 @@
     ],
     "action": {
         "default_icon": {
-            "16": "/img/ext16.png",
-            "32": "/img/ext32.png",
-            "128": "/img/ext128.png"
+            "16": "/img/yalt16.png",
+            "32": "/img/yalt32.png",
+            "128": "/img/yalt128.png"
         }
     },
     "icons": {
-        "16": "/img/ext16.png",
-        "32": "/img/ext32.png",
-        "128": "/img/ext128.png"
+        "16": "/img/yalt16.png",
+        "32": "/img/yalt32.png",
+        "128": "/img/yalt128.png"
     },
     "content_scripts": [
         {

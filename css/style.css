@@ -3,3 +3,14 @@ table {
     table-layout: fixed;
     text-align: center;
 }
+
+.wrap-flexbox {
+    display: flex;                /* [1] */ 
+    justify-content: center;      /* [2] */
+    align-items: center;          /* [3] */
+  }
+
+body {
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
