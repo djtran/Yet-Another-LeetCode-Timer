@@ -14,6 +14,8 @@
 
     // Aggregate Data recorded at the same time as problem data for broad metric trends
     // Stored in chrome.storage.local.get(['aggregate'])
+    // originally the idea for this was to store this in sync data so it could apply across sessions but then i found out that you can't have both sync and local extension data.
+    // This was used for 1.0, so it remains. May be removed in a 2.0, may be used if we ever decide to have online storage. Not a huge concern for me right now even if it does result in duplicated data.
     {
         "diff": "Easy",                                     //Corresponds to "difficulty"
         "err": 0,                                           //Corresponds to "errors"

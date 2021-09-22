@@ -1,7 +1,7 @@
 {
     "name": "Yet Another LeetCode Timer",
     "description": "Integrated LeetCode extension with times stored locally",
-    "version": "1.1.2",
+    "version": "1.2.0",
     "manifest_version": 3,
     "permissions": [
         "storage"
@@ -25,12 +25,12 @@
             ],
             "run_at": "document_start",
             "js": [
-                "src/main.js",
-                "src/timer.js"
+                "src/leetcode/main.js",
+                "src/leetcode/timer.js"
             ]
         }
     ],
     "background": {
-        "service_worker": "src/background.js"
+        "service_worker": "src/extension/background.js"
     }
 }
