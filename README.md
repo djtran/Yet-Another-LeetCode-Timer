@@ -1,5 +1,9 @@
 # Yet Another LeetCode Timer
 
+[Available on Chrome Web Store](https://chrome.google.com/webstore/detail/yet-another-leetcode-time/jhdhdganmlkemjmjckgeibdmoombbili?hl=en)
+
+### Why?
+
 There are a few of these out there but none that I was really satisfied with. [LeetPlug](https://leetplug.azurewebsites.net/) seemed promising but the server taking data is no longer in service so as a record for viewing progress, it's not super useful.
 
 I used [LeetCode Timer Tracker](https://chrome.google.com/webstore/detail/leetcode-time-tracker/obcihoolahbncgakepoceagnjnfgghhl?hl=en) for a while, but I wanted something that felt integrated into LeetCode like how LeetPlug functioned.
