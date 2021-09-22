@@ -50,24 +50,61 @@ function addExportButtonListeners() {
  * Data Import
  */
 
+var importedJSON = null;
 function handleFile(event) {
     var files = event.target.files;
     var file = files[0];
     console.log(file);
     var reader = new FileReader();
     reader.onload = function(evt) {
-        console.log(evt.target.result);
+        importedJSON = JSON.parse(evt.target.result);
     }
     reader.readAsText(file);
+}
+
+function addData(data) {
+    data.forEach(element => {
+        let obj = {
+            "diff": element["difficulty"],
+            "err": element["errors"],
+            "time": element["time"],
+            "date": element["date"]
+        }
+        historyData.push(element);
+        aggData.push(obj);
+    })
+    chrome.storage.local.set({'history': historyData});
+    chrome.storage.local.set({'aggregate': aggData});
+
+}
+
+function clearAndAddData(data) {
+    chrome.storage.local.clear();
+    historyData = [];
+    aggData = [];
+    addData(data);
 }
 
 function addImportButtonListeners() {
     document.querySelector("#import-file-elem").onchange = handleFile;
     document.querySelector(".data-import-json-add-btn").onclick = () => {
-        
+        if (importedJSON != null) {
+            addData(importedJSON);
+            location.reload();
+        } else {
+            window.alert("No JSON data selected for import");
+        }
     };
     document.querySelector(".data-import-json-overwrite-btn").onclick = () => {
-        
+        if (importedJSON != null) {
+            let confirmation = window.confirm("Do you really want to overwrite all of your data?");
+            if (confirmation) {
+                clearAndAddData(importedJSON);
+                location.reload();
+            }
+        } else {
+            window.alert("No JSON data selected for import");
+        }
     }
 }
 
