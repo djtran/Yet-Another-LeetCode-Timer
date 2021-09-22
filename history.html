@@ -43,8 +43,18 @@
     <hr>
     
     <h1>Problem History</h1>
-    <button class="data-export-json-btn">Export data as JSON</button>
-    <button class="data-export-csv-btn">Export data as CSV</button>
+    <div class="row">
+      <div class="five columns">
+        <button class="data-export-json-btn">Export to JSON</button>
+        <button class="data-export-csv-btn">Export to CSV</button>
+      </div>
+      <div class="seven columns">
+        <input type="file" id="fileElem" accept="*.json" onchange="handleFiles(this.files)">
+        <label class="button" for="fileElem">Select File</label>
+        <button class="data-import-json-add-btn">Import and Add</button>
+        <button class="data-import-json-overwrite-btn btn-danger">Import and Overwrite</button>
+      </div>
+    </div>
     <table>
       <thead>
 
@@ -63,6 +73,6 @@
   </div>
 </body>
 <script src="lib/frappe/frappe-charts.min.iife.js"></script>
-<script defer src="src/history.js"></script>
+<script defer src="src/extension/history.js"></script>
 
 </html>

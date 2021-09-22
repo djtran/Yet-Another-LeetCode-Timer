@@ -14,3 +14,42 @@ body {
     margin-top: 2%;
     margin-bottom: 2%;
 }
+
+.btn-danger {
+    background-color: salmon;
+    color: black;
+}
+
+.btn-danger:hover {
+    background-color: rgb(204, 70, 55);
+    color: white;
+}
+
+.btn-safe {
+    background-color: rgb(111, 233, 62);
+    color: black;
+}
+
+.btn-safe:hover {
+    background-color: rgb(67, 168, 26);
+    color: white;
+}
+
+#fileElem {
+    display: none;
+}
+
+.drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    width: auto;
+    font-family: sans-serif;
+    padding: 20px;
+}
+.drop-zone-form {
+    margin: 0;
+    padding: 0;
+}
+.drop-zone.highlight {
+    border-color: purple;
+}
