@@ -2,9 +2,17 @@ window.addEventListener("load", onLoadPage, false);
 
 var historyData;
 var aggData;
+/***
+ * Main execution on history.html.
+ */
+ function onLoadPage(evt) {
+    addImportButtonListeners();
+    addExportButtonListeners();
+    createAnalysis();
+}
 
 /***
- * Data Import/Export
+ * Data Export
  */
 function download(content, fileName, contentType) {
     var a = document.createElement("a");
@@ -38,14 +46,28 @@ function addExportButtonListeners() {
     }
 }
 
+/**
+ * Data Import
+ */
+
+function handleFile(event) {
+    var files = event.target.files;
+    var file = files[0];
+    console.log(file);
+    var reader = new FileReader();
+    reader.onload = function(evt) {
+        console.log(evt.target.result);
+    }
+    reader.readAsText(file);
+}
+
 function addImportButtonListeners() {
+    document.querySelector("#import-file-elem").onchange = handleFile;
     document.querySelector(".data-import-json-add-btn").onclick = () => {
-        let dateAsYMD = convertDateToYMD();
-        download(JSON.stringify(historyData), "yet-another-lc-timer-data-" + dateAsYMD + ".json", 'application/json')
+        
     };
     document.querySelector(".data-import-json-overwrite-btn").onclick = () => {
-        let dateAsYMD = convertDateToYMD();
-        download(jsonToCSV(historyData), "yet-another-lc-timer-data" + dateAsYMD + ".csv", 'text/csv')
+        
     }
 }
 
@@ -104,9 +126,9 @@ function createSubmissionsHeatMap(chartClass, datapoints) {
 }
 
 /***
- * Main execution on history.html.
+ * 
  */
-function onLoadPage(evt) {
+function createAnalysis() {
 
     chrome.storage.local.get(['history'], function (data) {
         historyData = data.history;
@@ -139,7 +161,6 @@ function onLoadPage(evt) {
             date.appendChild(dateText);
 
         });
-        addExportButtonListeners();
     });
 
     chrome.storage.local.get(['aggregate'], function (data) {
@@ -285,8 +306,8 @@ function onLoadPage(evt) {
             );
         }
     });
-
 }
+
 /***
  * Convenience methods.
  */
