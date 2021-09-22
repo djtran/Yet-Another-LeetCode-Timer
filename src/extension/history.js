@@ -2,6 +2,10 @@ window.addEventListener("load", onLoadPage, false);
 
 var historyData;
 var aggData;
+
+/***
+ * Data Import/Export
+ */
 function download(content, fileName, contentType) {
     var a = document.createElement("a");
     var file = new Blob([content], { type: contentType });
@@ -23,28 +27,6 @@ function jsonToCSV(content) {
     return csv;
 }
 
-//Dates are in ISO8601 extended format.
-function convertDateToYMD(dateString) {
-    if (dateString == null) {
-        return new Date().toISOString().split('T')[0]
-    } else {
-        return dateString.split('T')[0];
-    }
-}
-
-//Copying what is performed in the sample between timestampSec and timestampToMidnight:
-//https://github.com/frappe/charts/blob/5a4857d6a86f885fdddc57601c36cd8ec1726095/src/js/utils/date-utils.js#L39-L41
-const NO_OF_MILLIS = 1000;
-const SEC_IN_DAY = 86400;
-function dateAsTimestamp(dateInMilli, roundAhead = false) {
-    let timestamp = dateInMilli/NO_OF_MILLIS;
-	let midnightTs = Math.floor(timestamp - (timestamp % SEC_IN_DAY));
-	if(roundAhead) {
-		return midnightTs + SEC_IN_DAY;
-	}
-	return midnightTs;
-}
-
 function addExportButtonListeners() {
     document.querySelector(".data-export-json-btn").onclick = () => {
         let dateAsYMD = convertDateToYMD();
@@ -56,6 +38,20 @@ function addExportButtonListeners() {
     }
 }
 
+function addImportButtonListeners() {
+    document.querySelector(".data-import-json-add-btn").onclick = () => {
+        let dateAsYMD = convertDateToYMD();
+        download(JSON.stringify(historyData), "yet-another-lc-timer-data-" + dateAsYMD + ".json", 'application/json')
+    };
+    document.querySelector(".data-import-json-overwrite-btn").onclick = () => {
+        let dateAsYMD = convertDateToYMD();
+        download(jsonToCSV(historyData), "yet-another-lc-timer-data" + dateAsYMD + ".csv", 'text/csv')
+    }
+}
+
+/***
+ * Metrics and Charting.
+ */
 function create3BarTimeChart(chartClass, titleText, min, avg, max, colors = ['light-blue']) {
 
     let timeData = {
@@ -75,7 +71,6 @@ function create3BarTimeChart(chartClass, titleText, min, avg, max, colors = ['li
 }
 
 function createPercentageChart(chartClass, titleText, labels, values, colors = ['red', 'light-blue']) {
-
     let data = {
         labels: labels,
         datasets: [
@@ -95,12 +90,11 @@ function createPercentageChart(chartClass, titleText, labels, values, colors = [
 function createSubmissionsHeatMap(chartClass, datapoints) {
     let sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-    let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    let today = new Date();
     let data = {
         dataPoints: datapoints,
         start: sixMonthsAgo,
-        end: tomorrow
+        end: today
     }
     let heatmap = new frappe.Chart(chartClass, {
         title: "Successful Submissions Over the Last 6 Months",
@@ -109,6 +103,9 @@ function createSubmissionsHeatMap(chartClass, datapoints) {
     })
 }
 
+/***
+ * Main execution on history.html.
+ */
 function onLoadPage(evt) {
 
     chrome.storage.local.get(['history'], function (data) {
@@ -290,9 +287,35 @@ function onLoadPage(evt) {
     });
 
 }
+/***
+ * Convenience methods.
+ */
 
 function lineBreak(node) {
     node.appendChild(document.createElement("br"));
+}
+
+
+//Dates are in ISO8601 extended format.
+function convertDateToYMD(dateString) {
+    if (dateString == null) {
+        return new Date().toISOString().split('T')[0]
+    } else {
+        return dateString.split('T')[0];
+    }
+}
+
+//Copying what is performed in the sample between timestampSec and timestampToMidnight:
+//https://github.com/frappe/charts/blob/5a4857d6a86f885fdddc57601c36cd8ec1726095/src/js/utils/date-utils.js#L39-L41
+const NO_OF_MILLIS = 1000;
+const SEC_IN_DAY = 86400;
+function dateAsTimestamp(dateInMilli, roundAhead = false) {
+    let timestamp = dateInMilli/NO_OF_MILLIS;
+	let midnightTs = Math.floor(timestamp - (timestamp % SEC_IN_DAY));
+	if(roundAhead) {
+		return midnightTs + SEC_IN_DAY;
+	}
+	return midnightTs;
 }
 
 function convertTimeToComparableValueInSeconds(time) {
