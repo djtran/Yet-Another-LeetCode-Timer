@@ -2,13 +2,14 @@ window.addEventListener("load", onLoadPage, false);
 
 var historyData;
 var aggData;
+var dataByDate;
 /***
  * Main execution on history.html.
  */
  function onLoadPage(evt) {
     addImportButtonListeners();
     addExportButtonListeners();
-    createAnalysis();
+    loadFromStorage();
 }
 
 /***
@@ -111,6 +112,18 @@ function addImportButtonListeners() {
 /***
  * Metrics and Charting.
  */
+
+function indexByDate() {
+    dataByDate = {};
+    aggData.forEach(d => {
+        let date = convertDateToYMD(d["date"]);
+        if (date in dataByDate) {
+            dataByDate[date].push(d);
+        } else {
+            dataByDate[date] = [d];
+        }
+    })
+}
 function create3BarTimeChart(chartClass, titleText, min, avg, max, colors = ['light-blue']) {
 
     let timeData = {
@@ -165,184 +178,195 @@ function createSubmissionsHeatMap(chartClass, datapoints) {
 /***
  * 
  */
-function createAnalysis() {
 
+function loadFromStorage() {
     chrome.storage.local.get(['history'], function (data) {
         historyData = data.history;
-        let table = document.querySelector(".history-data");
-        historyData.forEach(element => {
-            let newRow = table.insertRow(-1);
-
-            let prob = newRow.insertCell(0);
-            let probLink = document.createElement('a');
-            let probText = document.createTextNode(element["problem"]);
-            probLink.appendChild(probText);
-            probLink.title = element["problem"];
-            probLink.href = element["url"]
-            prob.appendChild(probLink);
-
-            let diff = newRow.insertCell(1);
-            let diffText = document.createTextNode(element["difficulty"]);
-            diff.appendChild(diffText);
-
-            let errors = newRow.insertCell(2);
-            let errorsText = document.createTextNode(element["errors"]);
-            errors.appendChild(errorsText);
-
-            let time = newRow.insertCell(3);
-            let timeText = document.createTextNode(element["time"]);
-            time.appendChild(timeText);
-
-            let date = newRow.insertCell(4);
-            let dateText = document.createTextNode(convertDateToYMD(element["date"]));
-            date.appendChild(dateText);
-
-        });
     });
 
     chrome.storage.local.get(['aggregate'], function (data) {
         aggData = data.aggregate;
-
-        let easyTimeAvg, easyTimeMax, easyTimeMin, medTimeAvg, medTimeMax, medTimeMin, hardTimeAvg, hardTimeMax, hardTimeMin;
-        let easyDiff, medDiff, hardDiff, unkDiff;
-        let easyAttempts, medAttempts, hardAttempts, unkAttempts;
-        let successfulSubmissionsPerDay = {};
-        easyTimeAvg = easyTimeMax = easyTimeMin = medTimeAvg = medTimeMax = medTimeMin = hardTimeAvg = hardTimeMax = hardTimeMin = -1;
-        easyDiff = medDiff = hardDiff = unkDiff = easyAttempts = medAttempts = hardAttempts = unkAttempts = 0;
-        aggData.forEach(element => {
-            let diff = element["diff"]
-            let errors = element["err"]
-            let time = convertTimeToComparableValueInSeconds(element["time"])
-            let date = Date.parse(element["date"]);
-
-            //heatmap
-            if (successfulSubmissionsPerDay[dateAsTimestamp(date)]) {
-                successfulSubmissionsPerDay[dateAsTimestamp(date)] += 1;
-            } else {
-                successfulSubmissionsPerDay[dateAsTimestamp(date)] = 1;
-            }
-
-            if (diff == 'Easy') {
-                easyDiff++;
-                easyAttempts += errors + 1;
-                if (easyTimeAvg == -1) {
-                    easyTimeAvg = time;
-                    easyTimeMin = time;
-                    easyTimeMax = time;
-                } else {
-                    easyTimeAvg += time;
-                    easyTimeMin = Math.min(time, easyTimeMin);
-                    easyTimeMax = Math.max(time, easyTimeMax);
-                }
-
-            } else if (diff == 'Medium') {
-                medDiff++;
-                medAttempts += errors + 1;
-                if (medTimeAvg == -1) {
-                    medTimeAvg = time;
-                    medTimeMin = time;
-                    medTimeMax = time;
-                } else {
-                    medTimeAvg += time;
-                    medTimeMin = Math.min(time, medTimeMin);
-                    medTimeMax = Math.max(time, medTimeMax);
-                }
-
-            } else if (diff == 'Hard') {
-                hardDiff++;
-                hardAttempts += errors + 1;
-                if (hardTimeAvg == -1) {
-                    hardTimeAvg = time;
-                    hardTimeMin = time;
-                    hardTimeMax = time;
-                } else {
-                    hardTimeAvg += time;
-                    hardTimeMin = Math.min(time, hardTimeMin);
-                    hardTimeMax = Math.max(time, hardTimeMax);
-                }
-
-            } else {
-                unkDiff++;
-                unkAttempts += errors + 1;
-            }
-
-        });
-
-        easyTimeAvg = easyTimeAvg / easyDiff;
-        medTimeAvg = medTimeAvg / medDiff;
-        hardTimeAvg = hardTimeAvg / hardDiff;
-
-        //Aggregate
-        if (aggData) {
-            createPercentageChart(
-                ".difficulty-aggregate-chart",
-                "Difficulty of Completed Problems",
-                ["Easy", "Medium", "Hard"],
-                [easyDiff, medDiff, hardDiff],
-                ['green', 'yellow', 'red']
-            );
-
-            createSubmissionsHeatMap(
-                ".submissions-heatmap",
-                successfulSubmissionsPerDay
-            )
-        }
-
-        //Easy
-        if (easyDiff > 0) {
-            create3BarTimeChart(
-                ".easy-time-chart",
-                "Time Spent on Easy Problems",
-                easyTimeMin,
-                easyTimeAvg,
-                easyTimeMax
-            );
-
-
-            createPercentageChart(
-                ".easy-attempts-chart",
-                "Easy Submissions Distribution",
-                ["Errors", "Successful"],
-                [easyAttempts - easyDiff, easyDiff]
-            );
-        }
-
-        //Medium
-        if (medDiff > 0) {
-            create3BarTimeChart(
-                ".medium-time-chart",
-                "Time Spent on Medium Problems",
-                medTimeMin,
-                medTimeAvg,
-                medTimeMax,
-                ['orange']);
-
-            createPercentageChart(
-                ".medium-attempts-chart",
-                "Medium Submissions Distribution",
-                ["Errors", "Successful"],
-                [medAttempts - medDiff, medDiff]
-            );
-        }
-
-        //Hard
-        if (hardDiff > 0) {
-            create3BarTimeChart(
-                ".hard-time-chart",
-                "Time Spent on Hard Problems",
-                hardTimeMin,
-                hardTimeAvg,
-                hardTimeMax,
-                ['red']);
-
-            createPercentageChart(
-                ".hard-attempts-chart",
-                "Hard Submissions Distribution",
-                ["Errors", "Successful"],
-                [hardAttempts - hardDiff, hardDiff]
-            );
-        }
+        indexByDate();
+        createHistoryTable();
+        createAnalysis();
     });
+}
+
+function createHistoryTable() {
+    //create history table
+    let table = document.querySelector(".history-data");
+    historyData.forEach(element => {
+        let newRow = table.insertRow(-1);
+
+        let prob = newRow.insertCell(0);
+        let probLink = document.createElement('a');
+        let probText = document.createTextNode(element["problem"]);
+        probLink.appendChild(probText);
+        probLink.title = element["problem"];
+        probLink.href = element["url"]
+        prob.appendChild(probLink);
+
+        let diff = newRow.insertCell(1);
+        let diffText = document.createTextNode(element["difficulty"]);
+        diff.appendChild(diffText);
+
+        let errors = newRow.insertCell(2);
+        let errorsText = document.createTextNode(element["errors"]);
+        errors.appendChild(errorsText);
+
+        let time = newRow.insertCell(3);
+        let timeText = document.createTextNode(element["time"]);
+        time.appendChild(timeText);
+
+        let date = newRow.insertCell(4);
+        let dateText = document.createTextNode(convertDateToYMD(element["date"]));
+        date.appendChild(dateText);
+
+    });
+}
+
+function createAnalysis() {
+
+    //build charts from aggregate data.
+    let easyTimeAvg, easyTimeMax, easyTimeMin, medTimeAvg, medTimeMax, medTimeMin, hardTimeAvg, hardTimeMax, hardTimeMin;
+    let easyDiff, medDiff, hardDiff, unkDiff;
+    let easyAttempts, medAttempts, hardAttempts, unkAttempts;
+    let successfulSubmissionsPerDay = {};
+    easyTimeAvg = easyTimeMax = easyTimeMin = medTimeAvg = medTimeMax = medTimeMin = hardTimeAvg = hardTimeMax = hardTimeMin = -1;
+    easyDiff = medDiff = hardDiff = unkDiff = easyAttempts = medAttempts = hardAttempts = unkAttempts = 0;
+    aggData.forEach(element => {
+        let diff = element["diff"]
+        let errors = element["err"]
+        let time = convertTimeToComparableValueInSeconds(element["time"])
+        let date = Date.parse(element["date"]);
+
+        //heatmap
+        if (successfulSubmissionsPerDay[dateAsTimestamp(date)]) {
+            successfulSubmissionsPerDay[dateAsTimestamp(date)] += 1;
+        } else {
+            successfulSubmissionsPerDay[dateAsTimestamp(date)] = 1;
+        }
+
+        if (diff == 'Easy') {
+            easyDiff++;
+            easyAttempts += errors + 1;
+            if (easyTimeAvg == -1) {
+                easyTimeAvg = time;
+                easyTimeMin = time;
+                easyTimeMax = time;
+            } else {
+                easyTimeAvg += time;
+                easyTimeMin = Math.min(time, easyTimeMin);
+                easyTimeMax = Math.max(time, easyTimeMax);
+            }
+
+        } else if (diff == 'Medium') {
+            medDiff++;
+            medAttempts += errors + 1;
+            if (medTimeAvg == -1) {
+                medTimeAvg = time;
+                medTimeMin = time;
+                medTimeMax = time;
+            } else {
+                medTimeAvg += time;
+                medTimeMin = Math.min(time, medTimeMin);
+                medTimeMax = Math.max(time, medTimeMax);
+            }
+
+        } else if (diff == 'Hard') {
+            hardDiff++;
+            hardAttempts += errors + 1;
+            if (hardTimeAvg == -1) {
+                hardTimeAvg = time;
+                hardTimeMin = time;
+                hardTimeMax = time;
+            } else {
+                hardTimeAvg += time;
+                hardTimeMin = Math.min(time, hardTimeMin);
+                hardTimeMax = Math.max(time, hardTimeMax);
+            }
+
+        } else {
+            unkDiff++;
+            unkAttempts += errors + 1;
+        }
+
+    });
+
+    easyTimeAvg = easyTimeAvg / easyDiff;
+    medTimeAvg = medTimeAvg / medDiff;
+    hardTimeAvg = hardTimeAvg / hardDiff;
+
+    //Aggregate
+    if (aggData) {
+        createPercentageChart(
+            ".difficulty-aggregate-chart",
+            "Difficulty of Completed Problems",
+            ["Easy", "Medium", "Hard"],
+            [easyDiff, medDiff, hardDiff],
+            ['green', 'yellow', 'red']
+        );
+
+        createSubmissionsHeatMap(
+            ".submissions-heatmap",
+            successfulSubmissionsPerDay
+        )
+    }
+
+    //Easy
+    if (easyDiff > 0) {
+        create3BarTimeChart(
+            ".easy-time-chart",
+            "Time Spent on Easy Problems",
+            easyTimeMin,
+            easyTimeAvg,
+            easyTimeMax
+        );
+
+
+        createPercentageChart(
+            ".easy-attempts-chart",
+            "Easy Submissions Distribution",
+            ["Errors", "Successful"],
+            [easyAttempts - easyDiff, easyDiff]
+        );
+    }
+
+    //Medium
+    if (medDiff > 0) {
+        create3BarTimeChart(
+            ".medium-time-chart",
+            "Time Spent on Medium Problems",
+            medTimeMin,
+            medTimeAvg,
+            medTimeMax,
+            ['orange']);
+
+        createPercentageChart(
+            ".medium-attempts-chart",
+            "Medium Submissions Distribution",
+            ["Errors", "Successful"],
+            [medAttempts - medDiff, medDiff]
+        );
+    }
+
+    //Hard
+    if (hardDiff > 0) {
+        create3BarTimeChart(
+            ".hard-time-chart",
+            "Time Spent on Hard Problems",
+            hardTimeMin,
+            hardTimeAvg,
+            hardTimeMax,
+            ['red']);
+
+        createPercentageChart(
+            ".hard-attempts-chart",
+            "Hard Submissions Distribution",
+            ["Errors", "Successful"],
+            [hardAttempts - hardDiff, hardDiff]
+        );
+    }
 }
 
 /***
