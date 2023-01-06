@@ -13,31 +13,32 @@ function getProblemURL() {
 
 //null or a text value
 function getProblemName() {
-    return document.querySelector('[data-cy="question-title"]').innerText;
+    return document.querySelector('.mr-2').innerText;
 }
 
 function getDifficulty() {
-    if (document.querySelectorAll('[diff="easy"]').length == 1) {
+    if (document.evaluate("//div[text()='Easy']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue != null) {
         return DIFFICULTY.EASY;
-    } else if (document.querySelectorAll('[diff="medium"]').length == 1) {
+    } else if (document.evaluate("//div[text()='Medium']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue != null) {
         return DIFFICULTY.MEDIUM;
-    } else if (document.querySelectorAll('[diff="hard"]').length == 1) {
+    } else if (document.evaluate("//div[text()='Hard']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue != null) {
         return DIFFICULTY.HARD;
     } else {
         return DIFFICULTY.UNKNOWN;
     }
 }
 
-const submissionResultElement = "[class*='result__']";
-const submissionSuccessElement = "[class*='success__']";
-const submissionErrorElement = "[class*='error__']";
+const evaluateForSuccess = "//span[text()='Accepted']";
+const evaluateForWrongAnswer = "//div[text()='Wrong Answer']";
+const evaluateForRuntimeError = "//div[text()='Runtime Error']";
+
 
 function waitForSubmitResponse() {
-    let success = document.querySelector("[class*='result__']").querySelector("[class*='success__']");
-
+    let success = document.evaluate(evaluateForSuccess, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     //WrongAnswer, Time Limit Exceeded, Compile Error
-    let error = document.querySelector("[class*='result__']").querySelector("[class*='error__']");
-
+    let error = document.evaluate(evaluateForRuntimeError, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    let wrong = document.evaluate(evaluateForWrongAnswer, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    
     if (success != null) {
         successfulCompletion = true;
         //stop the problem timer, save the problem data.
@@ -73,21 +74,19 @@ function waitForSubmitResponse() {
             console.log("saving aggregate")
         })
 
-    } else if (error != null) {
+    } else if (error != null || wrong != null) {
         //increment the error counter for this problem.
         currentSession["errors"] += 1;
         clearInterval(submitTimer);
-
     }
     //else we poll again some time later.
-
-
 }
 
 var submitTimer;
 
 function addClickListenerToSubmitButton() {
-    document.querySelector('[data-cy="submit-code-btn"]').onclick = () => {
+    let node = document.evaluate("//button[text()='Submit']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    node.onclick = () => {
         submitTimer = setInterval(waitForSubmitResponse, 250);
     }
 }
@@ -97,7 +96,7 @@ var successfulCompletion = false;
 function addCodeMutationObserver() {
     //More Details https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
     // select the target node
-    var target = document.querySelector('.CodeMirror')
+    var target = document.querySelector('.monaco-editor')
     // create an observer instance
     var observer = new MutationObserver(function (mutations) {
         if (!successfulCompletion) {
@@ -120,7 +119,7 @@ function setupTimer() {
     }
 
     //init timer
-    let referenceNode = document.querySelector("[data-cy='run-code-btn']");
+    let referenceNode = document.evaluate("//button[text()='Run']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     timerDisplay = document.createElement("label");
     timerDisplay.classList.add('timer');
     timerDisplay.innerText = "00:00:00";
@@ -150,9 +149,12 @@ var currentProblem = "";
 var currentSession = {};
 
 function detectChanges() {
-    let title = getProblemName();
-
-    if (title != currentProblem) {
+    // https://leetcode.com/problems/two-sum/
+    // https://leetcode.com/problems/two-sum/submissions/
+    let url = window.location.href.split("/");
+    let title = url[4];
+    let subpage = url[5];
+    if (title != currentProblem && (subpage == null || subpage == 'description')) {
         console.log("Problem Changed from " + currentProblem + " to " + title);
         //New problem has been loaded.
         currentProblem = title;
@@ -180,13 +182,11 @@ function detectChanges() {
             "date": date.toISOString(),
             "errors": 0
         }
-
     }
 
 
 }
 
-var currentProblem = null;
 // Main onLoadPage function, starts the cycles needed to discover the elements inside the page
 // and to attach listeners to them
 function onLoadPage(evt) {
