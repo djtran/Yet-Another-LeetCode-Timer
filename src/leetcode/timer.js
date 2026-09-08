@@ -17,13 +17,11 @@ function startTimer() {
     if (!running) {
         startTime = new Date().getTime();
         tInterval = setInterval(getShowTime, 1000);
-        // change 1 to 1000 above to run script every second instead of every millisecond. one other change will be needed in the getShowTime() function below for this to work. see comment there.   
-
         paused = 0;
         running = 1;
-        timerDisplay.style.background = "#C7F1C7";
-        startTimerButton.style.cursor = "auto";
-        pauseTimerButton.style.cursor = "pointer";
+        if (timerDisplay) timerDisplay.style.background = "#C7F1C7";
+        if (startTimerButton) startTimerButton.style.cursor = "auto";
+        if (pauseTimerButton) pauseTimerButton.style.cursor = "pointer";
     }
 }
 function pauseTimer() {
@@ -34,21 +32,24 @@ function pauseTimer() {
         savedTime = difference;
         paused = 1;
         running = 0;
-        timerDisplay.style.background = "";
-        startTimerButton.style.cursor = "pointer";
-        pauseTimerButton.style.cursor = "auto";
+        if (timerDisplay) timerDisplay.style.background = "";
+        if (startTimerButton) startTimerButton.style.cursor = "pointer";
+        if (pauseTimerButton) pauseTimerButton.style.cursor = "auto";
     }
 }
 function resetTimer() {
-    console.log("Time before clearing: " + timerDisplay.innerHTML);
+    if (timerDisplay) {
+        console.log("YALT: Time before clearing: " + timerDisplay.innerHTML);
+        timerDisplay.innerHTML = '00:00:00';
+        timerDisplay.style.background = "";
+    }
     clearInterval(tInterval);
     savedTime = 0;
     difference = 0;
     paused = 0;
     running = 0;
-    timerDisplay.innerHTML = '00:00:00';
-    startTimerButton.style.cursor = "pointer";
-    pauseTimerButton.style.cursor = "auto";
+    if (startTimerButton) startTimerButton.style.cursor = "pointer";
+    if (pauseTimerButton) pauseTimerButton.style.cursor = "auto";
 }
 function getShowTime() {
     updatedTime = new Date().getTime();
@@ -64,5 +65,5 @@ function getShowTime() {
     hours = (hours < 10) ? "0" + hours : hours;
     minutes = (minutes < 10) ? "0" + minutes : minutes;
     seconds = (seconds < 10) ? "0" + seconds : seconds;
-    timerDisplay.innerHTML = hours + ':' + minutes + ':' + seconds;
+    if (timerDisplay) timerDisplay.innerHTML = hours + ':' + minutes + ':' + seconds;
 }
