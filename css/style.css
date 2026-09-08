@@ -53,3 +53,107 @@ body {
 .drop-zone.highlight {
     border-color: purple;
 }
+
+.wow-cards {
+    margin-bottom: 20px;
+}
+.wow-card {
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    background: #fafafa;
+}
+.wow-card h5 {
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+}
+.wow-metric {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+.wow-change {
+    font-size: 1rem;
+}
+.wow-change.positive {
+    color: #2e7d32;
+}
+.wow-change.negative {
+    color: #c62828;
+}
+.wow-change.neutral {
+    color: #757575;
+}
+
+.parallel-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+.charts-grid .chart-container {
+    min-height: 200px;
+}
+.last-n-table-wrapper {
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fafafa;
+    max-height: 480px;
+    overflow-y: auto;
+    font-size: 0.8rem;
+}
+.last-n-table-wrapper table {
+    width: 100%;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    border-collapse: collapse;
+}
+.last-n-table-wrapper th,
+.last-n-table-wrapper td {
+    padding: 4px 6px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+.last-n-table-wrapper th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #666;
+    border-bottom: 1.5px solid #ddd;
+    padding-bottom: 6px;
+}
+.last-n-table-wrapper td {
+    border-bottom: 1px solid #eee;
+}
+.diff-icon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+.diff-easy { background: #4caf50; }
+.diff-medium { background: #ff9800; }
+.diff-hard { background: #f44336; }
+.diff-icon-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78rem;
+}
+@media (max-width: 900px) {
+    .parallel-section {
+        grid-template-columns: 1fr;
+    }
+}

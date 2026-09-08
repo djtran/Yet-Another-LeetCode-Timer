@@ -41,6 +41,67 @@
     </div>
 
     <hr>
+    <h1>Recent Performance</h1>
+    <p>Compare your last N submissions against your overall average. Lower time and error rate is better.</p>
+
+    <div class="row wow-cards" style="align-items: flex-start;">
+      <div class="three columns wow-card last-n-avg-time-card">
+        <h5>Avg Solve Time</h5>
+        <div class="wow-metric"><span class="last-n-metric"></span> <span style="font-size: 0.9rem; color: #666;">vs</span> <span class="overall-metric" style="font-size: 1rem; color: #888;"></span></div>
+        <div class="wow-change"></div>
+      </div>
+      <div class="three columns wow-card last-n-error-rate-card">
+        <h5>Error Rate</h5>
+        <div class="wow-metric"><span class="last-n-metric"></span> <span style="font-size: 0.9rem; color: #666;">vs</span> <span class="overall-metric" style="font-size: 1rem; color: #888;"></span></div>
+        <div class="wow-change"></div>
+      </div>
+      <div class="three columns wow-card last-n-count-card">
+        <h5>Problems Solved</h5>
+        <div class="wow-metric"><span class="last-n-metric"></span> <span style="font-size: 0.9rem; color: #666;">of</span> <span class="overall-metric" style="font-size: 1rem; color: #888;"></span></div>
+        <div class="wow-change">Recent window vs total</div>
+      </div>
+      <div class="three columns" style="border: 1px solid #e1e1e1; border-radius: 8px; padding: 12px; background: #fafafa;">
+        <label for="last-n-input" style="font-weight: bold; display: block; margin-bottom: 6px;">Last N:</label>
+        <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 8px;">
+          <input type="number" id="last-n-input" min="1" max="100" value="5" style="width: 60px; margin: 0;">
+          <button class="last-n-update-btn button-primary" style="margin: 0; padding: 0 10px; height: 30px; line-height: 30px;">Update</button>
+        </div>
+        <p style="margin: 0; font-size: 0.9rem;">Showing last <strong><span class="last-n-value">5</span></strong> of <strong><span class="total-count">0</span></strong></p>
+        <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #666;">Adjust N to compare recent trend vs overall</p>
+      </div>
+    </div>
+
+    <!-- Parallel columns: charts (2 rows of 3) + literal list -->
+    <div class="parallel-section">
+      <div>
+        <div class="charts-grid">
+          <div class="last-n-easy-time-chart"></div>
+          <div class="last-n-medium-time-chart"></div>
+          <div class="last-n-hard-time-chart"></div>
+          <div class="last-n-easy-error-chart"></div>
+          <div class="last-n-medium-error-chart"></div>
+          <div class="last-n-hard-error-chart"></div>
+        </div>
+      </div>
+      <div class="last-n-table-wrapper">
+        <h5 style="margin-bottom: 4px;">Last <span class="last-n-value">5</span></h5>
+        <p style="font-size: 0.75rem; color: #888; margin: 0 0 8px 0;">Most recent first</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Problem</th>
+              <th style="width: 36px; text-align: center;">Diff</th>
+              <th>Time</th>
+              <th style="width: 28px; text-align: center;">Err</th>
+            </tr>
+          </thead>
+          <tbody class="last-n-table-body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr>
     
     <h1>Problem History</h1>
     <div class="row">
