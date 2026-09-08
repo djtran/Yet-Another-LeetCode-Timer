@@ -22,7 +22,13 @@
         <div class="submissions-heatmap"></div>
       </div>
     </div>
-    <hr>
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" role="tab" data-tab="statistics" aria-selected="true">Statistics</button>
+      <button class="tab-btn" role="tab" data-tab="history" aria-selected="false">History</button>
+      <button class="tab-btn" role="tab" data-tab="suggestions" aria-selected="false">Suggestions</button>
+    </nav>
+
+    <section class="tab-panel active" id="tab-statistics" role="tabpanel">
     <h1>Statistics</h1>
     <div class="row">
       <div class="easy-time-chart four columns"></div>
@@ -101,8 +107,9 @@
       </div>
     </div>
 
-    <hr>
-    
+    </section>
+
+    <section class="tab-panel" id="tab-history" role="tabpanel" hidden>
     <h1>Problem History</h1>
     <div class="row">
       <div class="five columns">
@@ -128,12 +135,104 @@
         </tr>
       </thead>
       <tbody class="history-data">
-        
+
       </tbody>
     </table>
+    </section>
+
+    <section class="tab-panel" id="tab-suggestions" role="tabpanel" hidden>
+    <h1>Review Queue</h1>
+    <p>Problems you haven't touched in a while that cost you the most attempts or the most time. Highest value re-attempt first.</p>
+
+    <div class="row review-controls">
+      <div class="four columns">
+        <label for="review-min-days">Untouched for at least</label>
+        <div class="review-inline">
+          <input type="number" id="review-min-days" min="1" max="365" value="14">
+          <span>days</span>
+        </div>
+      </div>
+      <div class="four columns">
+        <label for="review-limit">Show top</label>
+        <div class="review-inline">
+          <input type="number" id="review-limit" min="1" max="100" value="10">
+          <span>problems</span>
+        </div>
+      </div>
+      <div class="four columns">
+        <label for="review-sort">Rank by</label>
+        <select id="review-sort">
+          <option value="score">Overall review score</option>
+          <option value="passRate">Lowest pass rate</option>
+          <option value="time">Longest solve time</option>
+          <option value="stale">Longest since last attempt</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="review-empty" hidden></p>
+    <div class="review-table-wrapper">
+      <table class="review-table">
+        <thead>
+          <tr>
+            <th style="width: 56px;">Score</th>
+            <th>Problem</th>
+            <th style="width: 44px;">Diff</th>
+            <th style="width: 84px;">Pass rate</th>
+            <th style="width: 110px;">Avg time</th>
+            <th style="width: 92px;">Last solved</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody class="review-table-body"></tbody>
+      </table>
+    </div>
+
+    <hr>
+
+    <h1>Practice Sets</h1>
+    <div class="set-switcher">
+      <button class="set-btn active" data-set="blind75">Blind 75</button>
+      <button class="set-btn" data-set="grind75">Grind 75</button>
+      <span class="set-filter">
+        <label><input type="radio" name="set-filter" value="all" checked> All</label>
+        <label><input type="radio" name="set-filter" value="todo"> To do</label>
+        <label><input type="radio" name="set-filter" value="done"> Done</label>
+      </span>
+    </div>
+    <p class="set-blurb"></p>
+
+    <div class="row set-summary">
+      <div class="three columns wow-card set-progress-card">
+        <h5>Completed</h5>
+        <div class="wow-metric"><span class="set-done-count">0</span> <span style="font-size: 0.9rem; color: #666;">of</span> <span class="set-total-count" style="font-size: 1rem; color: #888;">0</span></div>
+        <div class="set-bar"><span class="set-bar-fill"></span></div>
+        <div class="wow-change neutral set-progress-pct"></div>
+      </div>
+      <div class="three columns wow-card">
+        <h5>Easy</h5>
+        <div class="wow-metric set-easy-count">0</div>
+        <div class="set-bar"><span class="set-bar-fill diff-easy"></span></div>
+      </div>
+      <div class="three columns wow-card">
+        <h5>Medium</h5>
+        <div class="wow-metric set-medium-count">0</div>
+        <div class="set-bar"><span class="set-bar-fill diff-medium"></span></div>
+      </div>
+      <div class="three columns wow-card">
+        <h5>Hard</h5>
+        <div class="wow-metric set-hard-count">0</div>
+        <div class="set-bar"><span class="set-bar-fill diff-hard"></span></div>
+      </div>
+    </div>
+
+    <div class="set-groups"></div>
+    <p class="set-footnote">Completion is matched against your recorded solves by problem URL, so only problems you solved with YALT running are checked off.</p>
+    </section>
   </div>
 </body>
 <script src="lib/frappe/frappe-charts.min.iife.js"></script>
+<script defer src="src/extension/problemsets.js"></script>
 <script defer src="src/extension/history.js"></script>
 
 </html>
